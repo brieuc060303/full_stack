@@ -1,0 +1,7 @@
+requests
+pandas
+aiohttp
+plotly
+geopandas
+dash
+dash_bootstrap_components

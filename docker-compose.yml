@@ -1,0 +1,63 @@
+version: '3.4'
+
+networks:
+  default:
+    driver: bridge
+
+services:
+
+  db:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgres
+
+  api:
+    build: 
+      context: .
+      dockerfile: Dockerfile_api
+    depends_on:
+      - db
+    networks:
+      - default
+    volumes:
+      - ./app/api/:/app
+      - ./app/api/models/data/attacks.csv:/app/api/models/data/attacks.csv
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+      
+  dbadmin:
+    image: dpage/pgadmin4
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "9001:9001"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  dashboard_app:
+    restart: always
+    build: 
+      context: .
+      dockerfile: Dockerfile_dashboard
+    networks:
+      - default
+    depends_on:
+      - api
+    volumes:
+      - ./app/dashboard_app:/app/dashboard_app
+      - ./app/dashboard_app/ressources:/app/dashboard_app/ressources
+    ports:
+      - "8050:8050"
+
+volumes:
+  postgres_data:
+  pgadmin_data:

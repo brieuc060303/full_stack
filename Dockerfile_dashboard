@@ -1,0 +1,19 @@
+# Dockerfile_dashboard
+FROM python:3.7-slim
+
+# Définir le répertoire de travail
+WORKDIR /app/dashboard_app
+
+# Copier les fichiers nécessaires
+COPY requirements_dash.txt .
+
+# Installer les dépendances
+RUN pip install -r requirements_dash.txt
+
+COPY ./app/dashboard_app /app/dashboard_app
+
+# Exposer le port 8050 pour le dashboard
+EXPOSE 8050
+
+# Commande pour démarrer le dashboard
+CMD ["python", "/app/dashboard_app/app.py"]

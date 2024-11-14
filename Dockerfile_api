@@ -1,0 +1,11 @@
+# Dockerfile_api
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
+
+# Copier le fichier des dépendances dans l'image
+COPY requirements_api.txt .
+
+# Installer les dépendances
+RUN pip install -r requirements_api.txt
+
+# Copier le code de l'API dans le conteneur
+COPY ./app/api /app/api

@@ -1,0 +1,10 @@
+starlette_exporter
+sqlalchemy
+pydantic
+psycopg2
+python-slugify
+pyjwt
+pandas
+fastapi>=0.70.0
+requests
+
