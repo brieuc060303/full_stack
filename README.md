@@ -47,7 +47,7 @@ Vous trouverez le dashboard à l'adresse suivante :
 ```sh
 http://localhost:8050
 ```
-Le dashboard est directement disponible, mais il n'a pas de données pour le moment. Pour cela, il est possible de rentrer des données facilement à l'adresse http://localhost:8050/docs. 
+Le dashboard est directement disponible, mais il n'a pas de données pour le moment. Pour cela, il est possible de rentrer des données facilement à l'adresse http://localhost:5000/docs. 
 Il faut créer des instances avec les requêtes de post afin de qu'il y ait des données dans la base de donnée. Il est aussi possible de post toutes les attaques du csv avec la requête post_all_attacks. Une fois des données dans la base de donnée, il faut appuyer sur le bouton actualiser et le dashboard s'actualisera.
 Enfin vous trouverez pgadmin, l'admin de la db postgres à l'adresse suivante : 
 ```sh
