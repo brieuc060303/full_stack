@@ -170,16 +170,46 @@ def delete_attack(attack_id: int, db: Session = Depends(get_db), authorization=D
     return {"detail": "Attack deleted"}
 
 # Route pour importer toutes les attaques depuis un fichier CSV
-@app.post("/attacks/post_all_attacks/", dependencies=[Depends(security)], description="Importe toutes les attaques depuis un fichier CSV et les ajoute à la base de données.")
-def post_all_attacks(file: UploadFile = File(...), db: Session = Depends(get_db), authorization=Depends(security)):
+@app.post("/attacks/post_all_attacks/", dependencies=[Depends(security)])
+async def post_all_attacks(db: Session = Depends(get_db), authorization=Depends(security)):
+    import csv
+    file_path = "/app/models/data/attacks.csv"
+
+    # Vérification du token d'authentification
     auth_header = f"Bearer {authorization.credentials}"
     auth = verify_autorization_header(auth_header)
-    df = pd.read_csv(file.file)
-    for _, row in df.iterrows():
-        attack = Attack(**row.to_dict())
-        db.add(attack)
-    db.commit()
-    return {"detail": "All attacks imported successfully"}
+
+    with open(file_path, newline='', encoding='latin-1') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                attack_data = AttackCreate(
+                    type=row.get("Type"),
+                    location=row.get("Location"),
+                    year= row.get("Year"),
+                    country=row.get("Country"),
+                    area=row.get("Area"),
+                    activity=row.get("Activity"),
+                    name=row.get("Name"),
+                    sex=row.get("Sex "),
+                    age=int(row["Age"]) if row["Age"].isdigit() else None,
+                    injury=row.get("Injury"),
+                    fatal=row.get("Fatal (Y/N)"),
+                    time=row.get("Time"),
+                    species=row.get("Species "),  # Note: Vérifie l'espace dans le nom de la colonne
+                    investigator=row.get("Investigator or Source"),
+                    pdf=row.get("pdf"),
+                    href_formula=row.get("href formula"),
+                    href=row.get("href"),
+                    caseNumber=row.get("Case Number"),
+                    original_order=row.get("original order")
+                ) 
+                
+                # Création de l'instance Attack
+                db_attack = Attack(**attack_data.dict())
+                db.add(db_attack)
+
+            db.commit()
+    return {"message": "All attacks have been posted"}
 
 # Route pour obtenir toutes les attaques
 @app.get("/attacks/", dependencies=[Depends(security)], description="Retourne la liste complète des attaques dans la base de données.")
